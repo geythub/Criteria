@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nurses Got Talent - Duet Contest</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            background-image: url(background.jpg);
+            background-size: cover;
+            overflow: hidden;
+            height: 100vh;
+            font-family: 'Montserrat', sans-serif;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(ellipse at center, rgba(121, 40, 202, 0.8) 0%, rgba(255, 0, 128, 0.8) 70%);
+
+
+        }
+        
+        .stage {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .scene {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        
+        .scene.active {
+            opacity: 1;
+        }
+        
+        /* Scene 1: Intro */
+        .intro-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-align: center;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M50 5 L60 25 L80 30 L65 45 L70 65 L50 55 L30 65 L35 45 L20 30 L40 25 Z' stroke='rgba(255,255,255,0.2)' stroke-width='1' fill='none'/%3E%3C/svg%3E");
+            background-size: 150px;
+        }
+        
+        .intro-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0;
+            transform: translateY(30px);
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .intro-subtitle {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            opacity: 0;
+            transform: translateY(30px);
+            margin-top: 1rem;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Scene 2: Silhouettes */
+        .silhouettes-container {
+            position: relative;
+            height: 100%;
+            width: 100%;
+            background-image: linear-gradient(to bottom, transparent 70%, rgba(0, 0, 0, 0.4));
+        }
+        
+        .silhouettes {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+        
+        .silhouette {
+            height: 100%;
+            opacity: 0;
+            transform: translateY(100px);
+            transform-origin: bottom center;
+        }
+        
+        
+        
+        @keyframes dance {
+            0% {
+                transform: translateY(0) rotate(-2deg);
+            }
+            100% {
+                transform: translateY(-20px) rotate(2deg);
+            }
+        }
+        
+        .lights {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        
+        .scene.active .lights {
+            opacity: 1;
+        }
+        
+        .light {
+            position: absolute;
+            top: -50%;
+            width: 3px;
+            height: 150%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0));
+            animation: lightBeam 5s ease-in-out infinite;
+            opacity: 0;
+            transform: rotate(10deg);
+        }
+        
+        .scene.active .light {
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+            transition-delay: 1.5s;
+        }
+        
+        @keyframes lightBeam {
+            0%, 100% {
+                transform: rotate(10deg);
+            }
+            50% {
+                transform: rotate(-10deg);
+            }
+        }
+        
+        /* Scene 3: Criteria */
+        .criteria-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 10 L35 25 L50 25 L40 35 L45 50 L30 40 L15 50 L20 35 L10 25 L25 25 Z' stroke='rgba(255,255,255,0.1)' stroke-width='1' fill='none'/%3E%3C/svg%3E");
+        }
+        
+        .criteria-card {
+            backdrop-filter: blur(10px);
+            background-color: rgba(225, 225, 225, 0.1);
+            border-radius: 20px;
+            padding: 6rem;
+            width: 90%;
+            height: 90%;
+            max-width: 900px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            position: relative;
+        }
+
+        .criteria-card::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            bottom: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            pointer-events: none;
+        }
+        
+        .scene.active .criteria-card {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .criteria-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            letter-spacing: 2px;
+            color: #ffffff;
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .criteria-subtitle {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 300;
+            text-align: center;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            transition-delay: 0.2s;
+        }
+        
+        .scene.active .criteria-subtitle {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .criteria-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .criteria-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 5px solid #d179ea;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+        
+        .scene.active .criteria-item:nth-child(1) { 
+            opacity: 1;
+            transform: translateX(0);
+            transition-delay: 0.2s;
+            border-left-color: #c247e8;
+        }
+        
+        .scene.active .criteria-item:nth-child(2) { 
+            opacity: 1;
+            transform: translateX(0);
+            transition-delay: 0.4s;
+            border-left-color: #d128a7;
+        }
+        
+        .scene.active .criteria-item:nth-child(3) { 
+            opacity: 1;
+            transform: translateX(0);
+            transition-delay: 0.6s;
+            border-left-color: #b6159d;
+        }
+        
+        .scene.active .criteria-item:nth-child(4) { 
+            opacity: 1;
+            transform: translateX(0);
+            transition-delay: 0.8s;
+            border-left-color: #b30c86;
+        }
+
+        .criteria-name {
+            display: flex;
+            align-items: center;
+        }
+
+        .criteria-name::before {
+            content: '';
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        
+        
+        .criteria-percent {
+            font-weight: 700;
+            color: #ffffff;
+            background-color: rgba(91, 9, 70, 0.5);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+        
+        /* Scene 4: Final */
+        .final-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-align: center;
+            background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.1));
+        }
+        
+        .final-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            opacity: 0;
+            transform: scale(1.2);
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        
+        .scene.active .final-title {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .final-date {
+            font-size: 2rem;
+            margin-top: 2rem;
+            opacity: 0;
+            transition: opacity 1s ease-out;
+            transition-delay: 0.5s;
+        }
+        
+        .scene.active .final-date {
+            opacity: 1;
+        }
+
+        /* Nurse Theme Elements */
+        .nursing-icon {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 19h8a4 4 0 0 0 4-4v-8a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v8a4 4 0 0 0 4 4z'%3E%3C/path%3E%3Cline x1='8' y1='9' x2='16' y2='9'%3E%3C/line%3E%3Cline x1='12' y1='5' x2='12' y2='13'%3E%3C/line%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.7;
+            z-index: 10;
+        }
+
+        .heartbeat-line {
+            position: absolute;
+            bottom: 80px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 5;
+        }
+
+        .heartbeat {
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='60' viewBox='0 0 1200 60'%3E%3Cpath d='M0,30 L30,30 L45,10 L60,50 L75,10 L90,30 L1200,30' stroke='rgba(255,255,255,0.2)' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+            background-repeat: repeat-x;
+            background-size: 100px 100%;
+            z-index: 5;
+        }
+        
+        /* Progress bar */
+        .progress-bar {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 6px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+            z-index: 100;
+        }
+        
+        .progress {
+            height: 100%;
+            width: 0;
+            background-color: #0099ff;
+            transition: width 0.5s linear;
+            box-shadow: 0 0 10px rgba(0, 153, 255, 0.7);
+        }
+        
+        /* Animations for Intro Scene */
+        .scene.active .intro-title {
+            animation: fadeInUp 1s ease-out forwards;
+            animation-delay: 0.5s;
+        }
+        
+        .scene.active .intro-subtitle {
+            animation: fadeInUp 1s ease-out forwards;
+            animation-delay: 1s;
+        }
+        
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Controls */
+        .controls {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 100;
+        }
+        
+        .control-btn {
+            background-color: rgba(215, 48, 171, 0.6);
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            color: white;
+            font-size: 1.2rem;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .control-btn:hover {
+            background-color: rgba(188, 51, 170, 0.8);
+            transform: translateY(-2px);
+        }
+        
+        .control-btn:active {
+            transform: translateY(0);
+        }
+        
+        .play-btn {
+            width: 54px;
+            height: 54px;
+            font-size: 1.5rem;
+        }
+        
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .intro-title {
+                font-size: 3rem;
+            }
+            
+            .intro-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .criteria-title {
+                font-size: 2.5rem;
+            }
+            
+            .criteria-item {
+                font-size: 1.2rem;
+            }
+            
+            .nursing-icon {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <div class="nursing-icon"></div>
+        <div class="heartbeat-line"></div>
+        <div class="heartbeat"></div>
+        
+        <div class="stage">
+            <!-- Scene 1: Intro -->
+            <div class="scene scene1 active">
+                <div class="intro-container">
+                    <h1 class="intro-title">CRITERIA FOR JUDGING</h1>
+                  
+                </div>
+            </div>
+            
+            
+            <!-- Scene 3: Criteria -->
+            <div class="scene scene3">
+                <div class="criteria-container">
+                    <div class="criteria-card">
+                        <h3 class="criteria-title">DUET CONTEST</h3>
+                        <div class="criteria-list">
+                            <div class="criteria-item">
+                                <span class="criteria-name">I. VOICE QUALITY</span>
+                                <span class="criteria-percent">40%</span>
+                            </div>
+                            <div class="criteria-item">
+                                <span class="criteria-name">II. STAGE PRESENCE</span>
+                                <span class="criteria-percent">20%</span>
+                            </div>
+                            <div class="criteria-item">
+                                <span class="criteria-name">III. AUDIENCE IMPACT</span>
+                                <span class="criteria-percent">10%</span>
+                            </div>
+                            <div class="criteria-item">
+                                <span class="criteria-name">IV. HARMONY</span>
+                                <span class="criteria-percent">30%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scene 4: Final -->
+            <div class="scene scene4">
+                <div class="criteria-container">
+                    <div class="criteria-card">
+                        <h3 class="criteria-title">DANCE CONTEST</h3>
+                        <div class="criteria-list">
+                            <div class="criteria-item">
+                                <span class="criteria-name">I. MASTERY</span>
+                                <span class="criteria-percent">40%</span>
+                            </div>
+                            <div class="criteria-item">
+                                <span class="criteria-name">II. CHOREOGRAPHY</span>
+                                <span class="criteria-percent">40%</span>
+                            </div>
+                            <div class="criteria-item">
+                                <span class="criteria-name">III. COSTUME</span>
+                                <span class="criteria-percent">10%</span>
+                            </div>
+                            <div class="criteria-item">
+                                <span class="criteria-name">IV. AUDIENCE IMPACT</span>
+                                <span class="criteria-percent">10%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn prev-btn">◀</button>
+            <button class="control-btn play-btn" id="playPauseBtn">▶</button>
+            <button class="control-btn next-btn">▶</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const scenes = document.querySelectorAll('.scene');
+            const progressBar = document.getElementById('progress');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const prevBtn = document.querySelector('.prev-btn');
+            const nextBtn = document.querySelector('.next-btn');
+            
+            let currentScene = 0;
+            let isPlaying = false;
+            let timer;
+            const introDuration = 5000; // 5 seconds for intro
+            const silhouettesDuration = 6000; // 6 seconds for silhouettes
+            const criteriaDuration = 7000; // 7 seconds for criteria scenes
+            const finalDuration = 5000; // 5 seconds for final scene
+
+            function getSceneDuration(sceneIndex) {
+                if (sceneIndex === 0) {
+                    return introDuration;
+                } else if (sceneIndex === 1) {
+                    return silhouettesDuration;
+                } else if (sceneIndex === 2 || sceneIndex === 3) {
+                    return criteriaDuration;
+                } else {
+                    return finalDuration;
+                }
+            }
+            
+            // Initialize
+            updateScene();
+            
+            // Play/Pause button
+            playPauseBtn.addEventListener('click', togglePlayPause);
+            
+            // Next button
+            nextBtn.addEventListener('click', function() {
+                nextScene();
+                resetTimer();
+            });
+            
+            // Previous button
+            prevBtn.addEventListener('click', function() {
+                prevScene();
+                resetTimer();
+            });
+
+            // Add keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowRight') {
+                    nextScene();
+                    resetTimer();
+                } else if (e.key === 'ArrowLeft') {
+                    prevScene();
+                    resetTimer();
+                } else if (e.key === ' ') {
+                    togglePlayPause();
+                    e.preventDefault();
+                }
+            });
+            
+            function togglePlayPause() {
+                if (isPlaying) {
+                    pauseVideo();
+                } else {
+                    playVideo();
+                }
+            }
+            
+            function playVideo() {
+                isPlaying = true;
+                playPauseBtn.textContent = '❚❚';
+                timer = setTimeout(function() {
+                    nextScene();
+                    if (currentScene === 0) {
+                        playVideo();
+                    }
+                }, getSceneDuration(currentScene));
+            }
+            
+            function pauseVideo() {
+                isPlaying = false;
+                playPauseBtn.textContent = '▶';
+                clearTimeout(timer);
+            }
+            
+            function resetTimer() {
+                pauseVideo();
+            }
+            
+            function nextScene() {
+                currentScene = (currentScene + 1) % scenes.length;
+                updateScene();
+                if (isPlaying) {
+                    resetTimer();
+                    playVideo();
+                }
+            }
+            
+            function prevScene() {
+                currentScene = (currentScene - 1 + scenes.length) % scenes.length;
+                updateScene();
+                if (isPlaying) {
+                    resetTimer();
+                    playVideo();
+                }
+            }
+            
+            function updateScene() {
+                // Hide all scenes
+                scenes.forEach(scene => {
+                    scene.classList.remove('active');
+                });
+                
+                // Show current scene
+                scenes[currentScene].classList.add('active');
+                
+                // Update progress bar
+                const progressPercentage = ((currentScene + 1) / scenes.length) * 100;
+                progressBar.style.width = `${progressPercentage}%`;
+                
+                // Add dancing class to silhouettes in scene 2
+                if (currentScene === 1) {
+                    setTimeout(() => {
+                        const silhouettes = document.querySelectorAll('.silhouette');
+                        silhouettes.forEach(silhouette => {
+                            silhouette.classList.add('dancing');
+                        });
+                    }, 1000);
+                } else {
+                    const silhouettes = document.querySelectorAll('.silhouette');
+                    silhouettes.forEach(silhouette => {
+                        silhouette.classList.remove('dancing');
+                    });
+                }
+            }
+            
+            // Auto-play after 1 second
+            setTimeout(playVideo, 1000);
+        });
+    </script>
+</body>
+</html>
